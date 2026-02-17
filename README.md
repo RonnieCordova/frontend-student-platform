@@ -1,47 +1,44 @@
-Tutorias-Platform Frontend 🎓
-This is the web-based user interface for the Peer-to-Peer Tutoring Platform. The frontend is built with React and Vite, designed to provide a seamless and secure experience for both students and tutors.
+# Tutorias-Platform Frontend 🎓
 
-🚀 Overview
+This is the web-based user interface for the Peer-to-Peer Tutoring Platform. The frontend is built with **React** and **Vite**, designed to provide a seamless and secure experience for both students and tutors.
+
+## 🚀 Overview
 The application serves as the gateway to a cloud-native tutoring ecosystem. It allows students to find tutors by subject and book sessions, while enabling tutors to manage their availability and requests in real-time.
 
-🛠️ Tech Stack
-Framework: React 18 (Vite)
+## 🛠️ Tech Stack
+* **Framework:** React 18 (Vite)
+* **HTTP Client:** Axios for REST API consumption
+* **Routing:** React Router DOM for SPA navigation
+* **State Management:** LocalStorage for JWT persistence
+* **Styling:** CSS3 / Tailwind CSS (Optional)
 
-HTTP Client: Axios for REST API consumption
+## 🛡️ Security Features
+As part of a **Cloud Security Architect** portfolio, this frontend implements:
+* **JWT Authentication:** Secure login flow with token-based access and persistent sessions.
+* **RBAC (Role-Based Access Control):** Conditional rendering and route protection based on 'Student', 'Tutor', and 'Admin' roles.
+* **Input Validation:** Frontend-side sanitization before API submission.
 
-Routing: React Router DOM for SPA navigation
+## ☁️ Architecture
+The frontend consumes a **FastAPI** backend deployed on **AWS ECS (Fargate)**, integrated with an **RDS PostgreSQL** database.
 
-State Management: LocalStorage for JWT persistence
 
-🛡️ Security Features
-As part of a Cloud Security Architect portfolio, this frontend implements:
 
-JWT Authentication: Secure login flow with token-based access and persistent sessions.
+## 🔧 Installation & Setup
+1. **Clone the repository:**
+   ```bash
+   git clone [https://github.com/YOUR_USER/frontend-tutorias.git](https://github.com/YOUR_USER/frontend-tutorias.git)
 
-RBAC (Role-Based Access Control): Conditional rendering and route protection based on 'Student', 'Tutor', and 'Admin' roles.
+2. **Install dependencies:**
+   npm install
 
-Input Validation: Frontend-side sanitization before API submission.
+3. **Configure Environment Variables:
+Create a .env file in the root directory:**
+    VITE_API_URL=[http://52.90.95.173:8000/api/v1](http://52.90.95.173:8000/api/v1)
 
-☁️ Architecture
-The frontend consumes a FastAPI backend deployed on AWS ECS (Fargate), integrated with an RDS PostgreSQL database.
+4. **Run the development server:**
+   npm run dev
 
-🔧 Installation & Setup
-Clone the repository:
-git clone https://github.com/YOUR_USER/frontend-tutorias.git
-
-Install dependencies:
-npm install
-
-Configure Environment Variables:
-Create a .env file in the root directory and add:
-VITE_API_URL=http://52.90.95.173:8000/api/v1
-
-Run the development server:
-npm run dev
-
-📈 Future Roadmap
-CDN Deployment: Integration with AWS CloudFront for global delivery.
-
-WAF Protection: Implementing AWS Web Application Firewall for request filtering.
-
-SSL/TLS: Migration to HTTPS using AWS Certificate Manager (ACM).
+## 📈 Future Roadmap
+- CDN Deployment: Integration with AWS CloudFront for global delivery.
+- WAF Protection: Implementing AWS Web Application Firewall for request filtering.
+- SSL/TLS: Migration to HTTPS using AWS Certificate Manager (ACM).
