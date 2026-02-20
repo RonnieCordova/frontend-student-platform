@@ -32,9 +32,18 @@ export const AuthProvider = ({ children }) => {
     setIsAuthenticated(true);
   };
 
-  const logout = () => {
-    setIsAuthenticated(false);
-    // Más adelante haremos que esto llame al backend para destruir la cookie
+  const logout = async () => {
+    try {
+      // Le decimos al backend: "Por favor, destruye la cookie de esta sesión"
+      // Nota: Asegúrate de que tu backend tenga esta ruta creada para invalidar la cookie
+      await api.post('/logout'); 
+    } catch (error) {
+      console.error("Error al intentar cerrar sesión en el servidor:", error);
+    } finally {
+      // Independientemente de si el backend responde bien o mal, 
+      // bloqueamos el acceso en el frontend inmediatamente
+      setIsAuthenticated(false);
+    }
   };
 
   return (
