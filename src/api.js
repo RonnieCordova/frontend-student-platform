@@ -2,15 +2,25 @@ import axios from 'axios';
 
 const api = axios.create({
   baseURL: import.meta.env.VITE_API_URL,
-  withCredentials: true,
+  // Fundamental: Esto obliga al navegador a enviar la cookie de sesión automáticamente en cada petición
+  withCredentials: true, 
 });
 
-api.interceptors.request.use((config) => {
-  const token = localStorage.getItem('token');
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
+// Ya no necesitamos interceptor de peticiones. El navegador hace el trabajo sucio.
+
+// Solo mantenemos el interceptor de respuesta (nuestro guardia)
+api.interceptors.response.use(
+  (response) => {
+    return response;
+  },
+  (error) => {
+    // Si el backend nos da 401 (Unauthorized), la cookie expiró, es falsa o no existe.
+    if (error.response && error.response.status === 401 && window.location.pathname !== '/') {
+      // Redirigimos al login inmediatamente
+      window.location.href = '/'; 
+    }
+    return Promise.reject(error);
   }
-  return config;
-});
+);
 
 export default api;

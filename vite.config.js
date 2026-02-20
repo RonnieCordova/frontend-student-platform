@@ -8,7 +8,7 @@ export default defineConfig({
     proxy: {
       // Intercepta todo lo que empiece con /api
       '/api': {
-        target: 'http://100.26.218.45:8000', // Reemplaza con tu IP actual
+        target: 'http://54.89.220.240:8000',
         changeOrigin: true,
       }
     }
