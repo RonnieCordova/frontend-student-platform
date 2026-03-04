@@ -4,79 +4,161 @@ import api from '../api';
 import { AuthContext } from '../AuthContext';
 
 export const Login = () => {
+    // estados para controlar si mostramos login o registro
+    const [isRegistering, setIsRegistering] = useState(false);
+    const [accountType, setAccountType] = useState('student'); // 'student' o 'tutor'
+
     // estados del formulario
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [name, setName] = useState(''); // solo se usa en registro
     const [status, setStatus] = useState('');
+    
     const navigate = useNavigate();
-
     const { login } = useContext(AuthContext);
 
-    const handleLogin = async (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        setStatus('Validando credenciales...');
+        setStatus(isRegistering ? 'Creando cuenta...' : 'Validando credenciales...');
+        
         try {
-            const formData = new FormData();
-            formData.append('username', email);
-            formData.append('password', password);
-
-            // enviamos los datos, el backend nos devuelve la cookie segura
-            await api.post('/login/access-token', formData);
+            if (isRegistering) {
+                // logica futura para el registro (por ahora solo simulamos)
+                // await api.post('/register', { email, password, name, role: accountType });
+                setStatus('Registro exitoso. Iniciando sesión...');
+                // despues de registrar, logueamos automaticamente
+            } else {
+                // logica actual de login
+                const formData = new FormData();
+                formData.append('username', email);
+                formData.append('password', password);
+                await api.post('/login/access-token', formData);
+            }
             
             login(); 
             navigate('/dashboard'); 
         } catch (err) {
-            console.error("Error en login:", err); 
-            setStatus('Credenciales incorrectas. Intenta de nuevo.');
+            console.error("Error en auth:", err); 
+            setStatus(isRegistering ? 'Error al crear la cuenta.' : 'Credenciales incorrectas. Intenta de nuevo.');
         }
     };
 
     return (
         <div className="min-h-screen bg-slate-50 font-sans text-slate-900 selection:bg-blue-200">
             
-            {/* Barra de navegación superior */}
-            <nav className="w-full px-6 py-4 flex justify-between items-center bg-white shadow-sm sticky top-0 z-50">
-                <div className="text-2xl font-extrabold tracking-tight text-slate-800">
+            {/* nav superior */}
+            <nav className="w-full px-6 py-4 flex justify-between items-center bg-white/80 backdrop-blur-md border-b border-slate-100 sticky top-0 z-50">
+                <div className="text-2xl font-black tracking-tighter text-slate-900 flex items-center gap-2">
+                    <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center text-white text-lg">🎓</div>
                     Tutorías<span className="text-blue-600">.</span>
                 </div>
-                <div className="hidden md:flex gap-6 text-sm font-medium text-slate-600">
-                    <a href="#objetivos" className="hover:text-blue-600 transition">Objetivos</a>
-                    <a href="#beneficios" className="hover:text-blue-600 transition">Beneficios</a>
+                <div className="hidden md:flex gap-8 text-sm font-semibold text-slate-500">
+                    <a href="#ecosistema" className="hover:text-blue-600 transition-colors">El Ecosistema</a>
+                    <a href="#recursos" className="hover:text-blue-600 transition-colors">Bóveda de Recursos</a>
                 </div>
             </nav>
 
-            {/* SECCIÓN HERO (Mitad info, Mitad Formulario) */}
-            <main className="max-w-7xl mx-auto px-6 py-16 md:py-24 flex flex-col lg:flex-row items-center gap-12 lg:gap-20">
+            <main className="max-w-7xl mx-auto px-6 py-12 md:py-20 flex flex-col lg:flex-row items-center gap-16">
                 
-                {/* Lado izquierdo: Copywriting persuasivo */}
+                {/* seccion izquierda: la propuesta de valor fuerte */}
                 <div className="flex-1 text-center lg:text-left">
-                    <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold text-slate-900 leading-tight mb-6">
-                        Domina tu futuro con la mejor <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600">plataforma de aprendizaje</span>
+                    <div className="inline-block px-4 py-1.5 rounded-full bg-blue-50 border border-blue-100 text-blue-700 font-semibold text-sm mb-6">
+                        🚀 Revolucionando el aprendizaje universitario
+                    </div>
+                    <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold text-slate-900 leading-[1.1] mb-6 tracking-tight">
+                        No estudies solo. <br/>
+                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600">
+                            Aprende en comunidad.
+                        </span>
                     </h1>
-                    <p className="text-lg text-slate-600 mb-8 max-w-2xl mx-auto lg:mx-0">
-                        Conecta con expertos, organiza tus sesiones de estudio y potencia tus habilidades en un entorno seguro, rápido y diseñado para tu éxito.
+                    <p className="text-lg text-slate-600 mb-8 max-w-2xl mx-auto lg:mx-0 leading-relaxed">
+                        El ecosistema definitivo donde estudiantes y expertos se conectan. 
+                        Agenda tutorías personalizadas 1-a-1 y desbloquea el acceso a nuestra bóveda colaborativa: 
+                        <strong> apuntes, exámenes pasados, cuestionarios y tips directos de quienes ya aprobaron la materia.</strong>
                     </p>
-                    <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
-                        <a href="#objetivos" className="px-8 py-3 rounded-xl bg-slate-100 text-slate-700 font-semibold hover:bg-slate-200 transition">
-                            Saber más
-                        </a>
+                    
+                    <div className="flex flex-wrap gap-4 justify-center lg:justify-start">
+                        <div className="flex items-center gap-2 text-sm font-medium text-slate-500 bg-white px-4 py-2 rounded-lg border border-slate-200 shadow-sm">
+                            <span className="text-green-500">✓</span> Verificación Académica
+                        </div>
+                        <div className="flex items-center gap-2 text-sm font-medium text-slate-500 bg-white px-4 py-2 rounded-lg border border-slate-200 shadow-sm">
+                            <span className="text-blue-500">✓</span> Recursos Curados
+                        </div>
                     </div>
                 </div>
 
-                {/* Lado derecho: Formulario de Login */}
-                <div className="w-full max-w-md bg-white p-8 rounded-3xl shadow-2xl border border-slate-100">
-                    <h2 className="text-2xl font-bold text-slate-800 mb-2">Bienvenido de nuevo</h2>
-                    <p className="text-slate-500 mb-8 text-sm">Ingresa a tu panel de control de estudiante.</p>
+                {/* seccion derecha: el panel de autenticacion dinamico */}
+                <div className="w-full max-w-md bg-white p-8 sm:p-10 rounded-3xl shadow-[0_20px_50px_-12px_rgba(0,0,0,0.1)] border border-slate-100">
+                    
+                    {/* tabs para alternar entre login y registro */}
+                    <div className="flex p-1 bg-slate-100 rounded-xl mb-8">
+                        <button 
+                            onClick={() => setIsRegistering(false)}
+                            className={`flex-1 py-2.5 text-sm font-bold rounded-lg transition-all ${!isRegistering ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
+                        >
+                            Ingresar
+                        </button>
+                        <button 
+                            onClick={() => setIsRegistering(true)}
+                            className={`flex-1 py-2.5 text-sm font-bold rounded-lg transition-all ${isRegistering ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
+                        >
+                            Crear Cuenta
+                        </button>
+                    </div>
 
-                    <form onSubmit={handleLogin} className="flex flex-col gap-5">
+                    <div className="mb-8">
+                        <h2 className="text-2xl font-bold text-slate-800 mb-2">
+                            {isRegistering ? 'Únete a la plataforma' : 'Bienvenido de vuelta'}
+                        </h2>
+                        <p className="text-slate-500 text-sm">
+                            {isRegistering ? 'Comienza a potenciar tus habilidades hoy mismo.' : 'Accede a tu panel de control académico.'}
+                        </p>
+                    </div>
+
+                    <form onSubmit={handleSubmit} className="flex flex-col gap-5">
+                        
+                        {/* campos extra solo para el registro */}
+                        {isRegistering && (
+                            <>
+                                <div>
+                                    <label className="block text-sm font-semibold text-slate-700 mb-2">Nombre completo</label>
+                                    <input 
+                                        type="text" 
+                                        placeholder="Juan Pérez" 
+                                        onChange={e => setName(e.target.value)} 
+                                        required 
+                                        className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
+                                    />
+                                </div>
+                                
+                                <div>
+                                    <label className="block text-sm font-semibold text-slate-700 mb-2">Quiero entrar como:</label>
+                                    <div className="grid grid-cols-2 gap-3">
+                                        <div 
+                                            onClick={() => setAccountType('student')}
+                                            className={`cursor-pointer border-2 rounded-xl p-3 text-center transition-all ${accountType === 'student' ? 'border-blue-500 bg-blue-50 text-blue-700 font-bold' : 'border-slate-200 text-slate-500 hover:border-slate-300'}`}
+                                        >
+                                            Estudiante
+                                        </div>
+                                        <div 
+                                            onClick={() => setAccountType('tutor')}
+                                            className={`cursor-pointer border-2 rounded-xl p-3 text-center transition-all ${accountType === 'tutor' ? 'border-blue-500 bg-blue-50 text-blue-700 font-bold' : 'border-slate-200 text-slate-500 hover:border-slate-300'}`}
+                                        >
+                                            Tutor
+                                        </div>
+                                    </div>
+                                </div>
+                            </>
+                        )}
+
                         <div>
-                            <label className="block text-sm font-semibold text-slate-700 mb-2">Correo electrónico</label>
+                            <label className="block text-sm font-semibold text-slate-700 mb-2">Correo institucional o personal</label>
                             <input 
                                 type="email" 
-                                placeholder="ejemplo@correo.com" 
+                                placeholder="ejemplo@universidad.edu" 
                                 onChange={e => setEmail(e.target.value)} 
                                 required 
-                                className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition"
+                                className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
                             />
                         </div>
                         
@@ -87,62 +169,77 @@ export const Login = () => {
                                 placeholder="••••••••" 
                                 onChange={e => setPassword(e.target.value)} 
                                 required 
-                                className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition"
+                                className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
                             />
                         </div>
                         
                         <button 
                             type="submit" 
-                            className="w-full mt-2 py-3 px-4 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl transition-all shadow-lg shadow-blue-200 active:scale-95"
+                            className="w-full mt-2 py-3.5 px-4 bg-slate-900 hover:bg-slate-800 text-white font-bold rounded-xl transition-all shadow-lg shadow-slate-200 active:scale-[0.98]"
                         >
-                            Iniciar Sesión
+                            {isRegistering ? 'Crear mi cuenta' : 'Iniciar Sesión'}
                         </button>
                     </form>
 
                     {status && (
-                        <div className={`mt-6 p-4 rounded-xl text-sm font-medium text-center border ${status.includes('incorrectas') ? 'bg-red-50 text-red-600 border-red-100' : 'bg-green-50 text-green-600 border-green-100'}`}>
+                        <div className={`mt-6 p-4 rounded-xl text-sm font-medium text-center border ${status.includes('Error') || status.includes('incorrectas') ? 'bg-red-50 text-red-600 border-red-100' : 'bg-blue-50 text-blue-600 border-blue-100'}`}>
                             {status}
                         </div>
                     )}
                 </div>
             </main>
 
-            {/* SECCIÓN SOBRE LA APP (Scroll hacia abajo) */}
-            <section id="objetivos" className="bg-white py-20 border-t border-slate-100">
+            {/* seccion de beneficios detallados */}
+            <section id="ecosistema" className="bg-white py-24 border-t border-slate-100">
                 <div className="max-w-7xl mx-auto px-6">
-                    <div className="text-center mb-16">
-                        <h2 className="text-3xl font-bold text-slate-900 mb-4">¿Por qué usar nuestra plataforma?</h2>
-                        <p className="text-slate-600 max-w-2xl mx-auto">Nuestra arquitectura está diseñada para ofrecerte la experiencia educativa más fluida y segura del mercado.</p>
+                    <div className="text-center mb-16 max-w-3xl mx-auto">
+                        <h2 className="text-3xl md:text-4xl font-extrabold text-slate-900 mb-6">El aprendizaje no tiene que ser solitario</h2>
+                        <p className="text-lg text-slate-600">
+                            Diseñamos una arquitectura pensada para la colaboración masiva. 
+                            Cada interacción, archivo y tutoría está centralizada para maximizar tu rendimiento académico.
+                        </p>
                     </div>
 
-                    <div className="grid md:grid-cols-3 gap-10">
-                        {/* Tarjeta 1 */}
-                        <div className="p-8 rounded-2xl bg-slate-50 border border-slate-100 hover:shadow-lg transition">
-                            <div className="w-12 h-12 bg-blue-100 text-blue-600 rounded-xl flex items-center justify-center text-2xl mb-6">🔒</div>
-                            <h3 className="text-xl font-bold text-slate-800 mb-3">Máxima Seguridad</h3>
-                            <p className="text-slate-600">Tus datos viajan encriptados y protegidos bajo los estándares más estrictos de seguridad en la nube.</p>
+                    <div className="grid md:grid-cols-3 gap-8">
+                        {/* tarjeta 1 */}
+                        <div className="p-8 rounded-3xl bg-slate-50 border border-slate-100 hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
+                            <div className="w-14 h-14 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-2xl flex items-center justify-center text-white text-2xl mb-6 shadow-lg shadow-blue-200">
+                                👨‍🏫
+                            </div>
+                            <h3 className="text-xl font-bold text-slate-900 mb-3">Tutorías a Medida</h3>
+                            <p className="text-slate-600 leading-relaxed">
+                                Filtra tutores por materia, universidad o calificación. Agenda sesiones por videollamada y resuelve dudas específicas en tiempo real con estudiantes de semestres superiores.
+                            </p>
                         </div>
 
-                        {/* Tarjeta 2 */}
-                        <div className="p-8 rounded-2xl bg-slate-50 border border-slate-100 hover:shadow-lg transition">
-                            <div className="w-12 h-12 bg-indigo-100 text-indigo-600 rounded-xl flex items-center justify-center text-2xl mb-6">⚡</div>
-                            <h3 className="text-xl font-bold text-slate-800 mb-3">Rendimiento Fluido</h3>
-                            <p className="text-slate-600">Interfaz rápida y optimizada para que pierdas menos tiempo esperando y más tiempo aprendiendo.</p>
+                        {/* tarjeta 2 */}
+                        <div className="p-8 rounded-3xl bg-slate-50 border border-slate-100 hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
+                            <div className="w-14 h-14 bg-gradient-to-br from-emerald-400 to-teal-500 rounded-2xl flex items-center justify-center text-white text-2xl mb-6 shadow-lg shadow-emerald-200">
+                                🗄️
+                            </div>
+                            <h3 className="text-xl font-bold text-slate-900 mb-3">Bóveda Colaborativa</h3>
+                            <p className="text-slate-600 leading-relaxed">
+                                Acceso ilimitado a un repositorio alimentado por la comunidad. Descarga tareas resueltas, resúmenes, exámenes de años pasados y cuestionarios interactivos.
+                            </p>
                         </div>
 
-                        {/* Tarjeta 3 */}
-                        <div className="p-8 rounded-2xl bg-slate-50 border border-slate-100 hover:shadow-lg transition">
-                            <div className="w-12 h-12 bg-emerald-100 text-emerald-600 rounded-xl flex items-center justify-center text-2xl mb-6">📱</div>
-                            <h3 className="text-xl font-bold text-slate-800 mb-3">100% Responsivo</h3>
-                            <p className="text-slate-600">Estudia desde tu computadora de escritorio o revisa tus clases en el camino desde tu teléfono móvil.</p>
+                        {/* tarjeta 3 */}
+                        <div className="p-8 rounded-3xl bg-slate-50 border border-slate-100 hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
+                            <div className="w-14 h-14 bg-gradient-to-br from-violet-500 to-purple-600 rounded-2xl flex items-center justify-center text-white text-2xl mb-6 shadow-lg shadow-violet-200">
+                                🛡️
+                            </div>
+                            <h3 className="text-xl font-bold text-slate-900 mb-3">Ecosistema Verificado</h3>
+                            <p className="text-slate-600 leading-relaxed">
+                                Calidad asegurada. Los tutores y materiales son rankeados por la misma comunidad. Nuestro sistema cloud garantiza que tus datos e interacciones sean 100% privados.
+                            </p>
                         </div>
                     </div>
                 </div>
             </section>
             
-            {/* Footer */}
-            <footer className="bg-slate-900 py-8 text-center text-slate-400 text-sm">
-                <p>© 2026 Tutorías Platform. Arquitectura Cloud Segura.</p>
+            <footer className="bg-slate-900 py-12 text-center text-slate-400 text-sm">
+                <p className="mb-2">© 2026 Tutorías Platform. Potenciando universidades en toda la región.</p>
+                <p className="text-slate-500">Arquitectura Cloud Segura y Escalable.</p>
             </footer>
 
         </div>
